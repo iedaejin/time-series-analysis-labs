@@ -1,0 +1,52 @@
+---
+title: "Lab 09 — Review Exercises"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+Complete the exercises below using `fpp3`. Show plots and short written interpretations.
+
+## Setup
+
+```{r}
+library(fpp3)
+```
+
+
+## 1. Graphics + ACF
+
+```{r}
+aus_production |> autoplot(Beer)
+aus_production |> gg_season(Beer)
+aus_production |> ACF(Beer) |> autoplot()
+```
+
+## 2. Benchmarks vs SES
+
+```{r}
+train <- aus_production |> filter_index(. ~ "2008 Q4")
+fit <- train |>
+  model(
+    snaive = SNAIVE(Beer),
+    ses = ETS(Beer ~ error("A") + trend("N") + season("N"))
+  )
+fc <- fit |> forecast(h = 8)
+fc |> accuracy(aus_production)
+```
+
+## 3. Residuals
+
+```{r}
+fit |> gg_tsresiduals()
+```
+
+## 4. Midterm reflection
+
+List five topics to revise tonight.

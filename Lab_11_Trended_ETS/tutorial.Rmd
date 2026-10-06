@@ -1,0 +1,98 @@
+---
+title: "Lab 11 — Trended ETS (Holt)"
+subtitle: "Time Series Analysis (BDBA)"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(fpp3)
+knitr::opts_chunk$set(
+  echo = FALSE, message = FALSE, warning = FALSE,
+  fig.width = 8, fig.height = 4
+)
+source("lab_submission.R")
+
+lab_meta <- list(id = "lab11", title = "Trended ETS (Holt)")
+lab_prompts <- c(
+  q1 = "Holt’s linear method adds which component relative to SES?",
+  q2 = "For trending log(GDP), AICc alone is enough to compare ETS vs ARIMA families:",
+  q3 = "Which model would you prefer for Spain log(GDP) and why (AICc + residuals)?"
+)
+```
+
+## What you will do
+
+Open this file and click **Run Document**. Packages: `learnr`, `fpp3`.
+Exercise chunks run when you click Run Code. They are not knitted in one pass.
+
+## SES vs Holt
+```{r holt-ex, exercise=TRUE, exercise.lines=14}
+library(fpp3)
+spain <- global_economy |> filter(Country == "Spain")
+fit <- spain |>
+  model(
+    ses = ETS(log(GDP) ~ error("A") + trend("N") + season("N")),
+    holt = ETS(log(GDP) ~ error("A") + trend("A") + season("N"))
+  )
+fit |> forecast(h = 8) |> autoplot(spain)
+glance(fit) |> select(.model, AICc, AIC, BIC)
+fit |> gg_tsresiduals()
+```
+
+```{r q1}
+question(
+  lab_prompts[["q1"]],
+  answer("A trend (slope) component", correct = TRUE),
+  answer("Only seasonal indices"),
+  answer("An MA(1) error term only"),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+```{r q2}
+question(
+  lab_prompts[["q2"]],
+  answer("False — AICc is not universal across families; use hold-out too", correct = TRUE),
+  answer("True — lower AICc always wins every test set"),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+```{r q3}
+question_text(
+  lab_prompts[["q3"]],
+  open_answer(),
+  placeholder = "Prefer Holt/SES because …",
+  trim = TRUE
+)
+```
+
+## Submit
+
+Answer the questions above first, type your name, download the `.txt`, and upload it.
+
+```{r submit-ui, echo=FALSE}
+shiny::textInput("student_name", "Your name", placeholder = "Name Surname")
+shiny::downloadButton("download_txt", "Download submission .txt")
+```
+
+```{r submit-server, context="server"}
+output$download_txt <- shiny::downloadHandler(
+  filename = function() lab_submission_filename(input$student_name, lab_meta$id),
+  content = function(file) {
+    write_lab_submission(
+      path = file,
+      name = input$student_name,
+      lab_id = lab_meta$id,
+      lab_title = lab_meta$title,
+      state = learnr::get_tutorial_state(),
+      prompts = lab_prompts
+    )
+  }
+)
+```

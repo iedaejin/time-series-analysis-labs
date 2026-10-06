@@ -1,0 +1,97 @@
+---
+title: "Lab 15 — Stationarity and Differencing"
+subtitle: "Time Series Analysis (BDBA)"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(fpp3)
+knitr::opts_chunk$set(
+  echo = FALSE, message = FALSE, warning = FALSE,
+  fig.width = 8, fig.height = 4
+)
+source("lab_submission.R")
+
+lab_meta <- list(id = "lab15", title = "Stationarity and Differencing")
+lab_prompts <- c(
+  q1 = "First difference ∇y_t equals:",
+  q2 = "A slowly decaying ACF in levels often suggests:",
+  q3 = "For Spain log(GDP), does first differencing look more stationary? Why?"
+)
+```
+
+## What you will do
+
+Open this file and click **Run Document**. Packages: `learnr`, `fpp3`.
+Exercise chunks run when you click Run Code. They are not knitted in one pass.
+
+## Levels vs growth
+```{r diff-ex, exercise=TRUE, exercise.lines=12}
+library(fpp3)
+spain <- global_economy |> filter(Country == "Spain")
+spain |> autoplot(log(GDP))
+spain |> mutate(g = difference(log(GDP))) |> autoplot(g)
+spain |> ACF(log(GDP)) |> autoplot()
+spain |> ACF(difference(log(GDP))) |> autoplot()
+# Hand check:
+difference(c(10, 12, 11, 15))
+```
+
+```{r q1}
+question(
+  lab_prompts[["q1"]],
+  answer("y_t - y_{t-1}", correct = TRUE),
+  answer("y_t - y_{t-4}"),
+  answer("y_t + y_{t-1}"),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+```{r q2}
+question(
+  lab_prompts[["q2"]],
+  answer("Nonstationarity / strong persistence", correct = TRUE),
+  answer("Exact white noise"),
+  answer("You must set seasonality to none"),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+```{r q3}
+question_text(
+  lab_prompts[["q3"]],
+  open_answer(),
+  placeholder = "Yes/No — ACF of differences …",
+  trim = TRUE
+)
+```
+
+## Submit
+
+Answer the questions above first, type your name, download the `.txt`, and upload it.
+
+```{r submit-ui, echo=FALSE}
+shiny::textInput("student_name", "Your name", placeholder = "Name Surname")
+shiny::downloadButton("download_txt", "Download submission .txt")
+```
+
+```{r submit-server, context="server"}
+output$download_txt <- shiny::downloadHandler(
+  filename = function() lab_submission_filename(input$student_name, lab_meta$id),
+  content = function(file) {
+    write_lab_submission(
+      path = file,
+      name = input$student_name,
+      lab_id = lab_meta$id,
+      lab_title = lab_meta$title,
+      state = learnr::get_tutorial_state(),
+      prompts = lab_prompts
+    )
+  }
+)
+```

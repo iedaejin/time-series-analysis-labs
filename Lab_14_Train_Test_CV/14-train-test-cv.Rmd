@@ -1,0 +1,38 @@
+---
+title: "Lab 14 — Train/Test and Time Series CV"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+Complete the exercises below using `fpp3`. Show plots and short written interpretations.
+
+## Setup
+
+```{r}
+library(fpp3)
+```
+
+
+## 1. Chronological split
+
+```{r}
+train <- aus_production |> filter_index(. ~ "2010 Q4")
+fit <- train |> model(snaive = SNAIVE(Beer), ets = ETS(Beer))
+fc <- fit |> forecast(h = 8)
+fc |> accuracy(aus_production)
+```
+
+## 2. Sensitivity
+
+Change the origin (e.g. `"2009 Q4"`). Do rankings change?
+
+## 3. Group assignment
+
+List deliverables from the brief and your proposed methods shortlist.

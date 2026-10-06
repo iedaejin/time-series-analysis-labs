@@ -1,0 +1,51 @@
+---
+title: "Lab 16 — ARMA Processes"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+Complete the exercises below using `fpp3`. Show plots and short written interpretations.
+
+## Setup
+
+```{r}
+library(fpp3)
+```
+
+
+## 1. Simulate AR(1) and MA(1)
+
+```{r}
+set.seed(1)
+ar1 <- tibble(
+  idx = seq_len(300),
+  y = as.numeric(arima.sim(model = list(ar = 0.7), n = 300))
+) |>
+  as_tsibble(index = idx)
+
+ma1 <- tibble(
+  idx = seq_len(300),
+  y = as.numeric(arima.sim(model = list(ma = 0.7), n = 300))
+) |>
+  as_tsibble(index = idx)
+
+ar1 |> ACF(y) |> autoplot()
+ar1 |> PACF(y) |> autoplot()
+ma1 |> ACF(y) |> autoplot()
+ma1 |> PACF(y) |> autoplot()
+```
+
+## 2. Fit
+
+```{r}
+fit <- ar1 |> model(ARIMA(y ~ pdq(1, 0, 0) + PDQ(0, 0, 0)))
+report(fit)
+fit |> gg_tsresiduals()
+```

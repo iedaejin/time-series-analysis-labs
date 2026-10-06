@@ -1,0 +1,45 @@
+---
+title: "Lab 11 — Trended ETS (Holt)"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+Complete the exercises below using `fpp3`. Show plots and short written interpretations.
+
+## Setup
+
+```{r}
+library(fpp3)
+```
+
+
+## 1. Fit SES vs Holt
+
+```{r}
+spain <- global_economy |> filter(Country == "Spain")
+fit <- spain |>
+  model(
+    ses = ETS(log(GDP) ~ error("A") + trend("N") + season("N")),
+    holt = ETS(log(GDP) ~ error("A") + trend("A") + season("N"))
+  )
+```
+
+## 2. Forecasts and AICc
+
+```{r}
+fit |> forecast(h = 8) |> autoplot(spain)
+glance(fit) |> select(.model, AICc, AIC, BIC)
+```
+
+## 3. Residuals
+
+```{r}
+fit |> gg_tsresiduals()
+```

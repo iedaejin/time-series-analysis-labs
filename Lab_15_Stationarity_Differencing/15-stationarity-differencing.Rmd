@@ -1,0 +1,40 @@
+---
+title: "Lab 15 — Stationarity and Differencing"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+Complete the exercises below using `fpp3`. Show plots and short written interpretations.
+
+## Setup
+
+```{r}
+library(fpp3)
+```
+
+
+## 1. Levels vs growth
+
+```{r}
+spain <- global_economy |> filter(Country == "Spain")
+spain |> autoplot(log(GDP))
+spain |> mutate(g = difference(log(GDP))) |> autoplot(g)
+```
+
+## 2. ACF comparison
+
+```{r}
+spain |> ACF(log(GDP)) |> autoplot()
+spain |> ACF(difference(log(GDP))) |> autoplot()
+```
+
+## 3. Hand check
+
+Verify `difference()` on a short numeric vector matches $\nabla y_t$ by hand.

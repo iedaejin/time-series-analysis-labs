@@ -1,0 +1,108 @@
+---
+title: "Lab 18 — ETS, Accuracy & ARIMA Bridge"
+subtitle: "Time Series Analysis (BDBA)"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(fpp3)
+knitr::opts_chunk$set(
+  echo = FALSE, message = FALSE, warning = FALSE,
+  fig.width = 8, fig.height = 4
+)
+source("lab_submission.R")
+
+lab_meta <- list(id = "lab18", title = "ETS Accuracy Stationarity ARIMA")
+lab_prompts <- c(
+  q1 = "Should you pick between ETS and ARIMA using AICc alone?",
+  q2 = "A last-8-quarter hold-out for Beer means the test length is:",
+  q3 = "Winning model on test RMSE? Would you use d=1? Any residual ACF concern?"
+)
+```
+
+## What you will do
+
+Open this file and click **Run Document**. Packages: `learnr`, `fpp3`.
+Exercise chunks run when you click Run Code. They are not knitted in one pass.
+
+## Split, ETS/SNAIVE, differencing, ARIMA
+```{r bridge-ex, exercise=TRUE, exercise.lines=20}
+library(fpp3)
+beer <- aus_production |>
+  select(Quarter, Beer) |>
+  filter(!is.na(Beer))
+beer_train <- beer |> filter(Quarter <= max(Quarter) - 8)
+beer_test  <- beer |> filter(Quarter >  max(Quarter) - 8)
+c(train = nrow(beer_train), test = nrow(beer_test))
+
+fit <- beer_train |>
+  model(
+    snaive = SNAIVE(Beer),
+    ets = ETS(Beer),
+    arima = ARIMA(Beer)
+  )
+fc <- fit |> forecast(h = nrow(beer_test))
+fc |> accuracy(beer) |> select(.model, RMSE, MAE, MASE)
+
+beer_train |> gg_tsdisplay(Beer, plot_type = "partial")
+beer_train |> gg_tsdisplay(difference(Beer), plot_type = "partial")
+fit |> select(ets) |> gg_tsresiduals()
+```
+
+```{r q1}
+question(
+  lab_prompts[["q1"]],
+  answer("No — use hold-out / TS CV across families", correct = TRUE),
+  answer("Yes — AICc is universal"),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+```{r q2}
+question(
+  lab_prompts[["q2"]],
+  answer("8 quarters", correct = TRUE),
+  answer("1 quarter"),
+  answer("All of history"),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+```{r q3}
+question_text(
+  lab_prompts[["q3"]],
+  open_answer(),
+  placeholder = "Winner …; d=…; residual caveat …",
+  trim = TRUE
+)
+```
+
+## Submit
+
+Answer the questions above first, type your name, download the `.txt`, and upload it.
+
+```{r submit-ui, echo=FALSE}
+shiny::textInput("student_name", "Your name", placeholder = "Name Surname")
+shiny::downloadButton("download_txt", "Download submission .txt")
+```
+
+```{r submit-server, context="server"}
+output$download_txt <- shiny::downloadHandler(
+  filename = function() lab_submission_filename(input$student_name, lab_meta$id),
+  content = function(file) {
+    write_lab_submission(
+      path = file,
+      name = input$student_name,
+      lab_id = lab_meta$id,
+      lab_title = lab_meta$title,
+      state = learnr::get_tutorial_state(),
+      prompts = lab_prompts
+    )
+  }
+)
+```

@@ -1,0 +1,52 @@
+---
+title: "Lab 01 — Introduction to R"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+
+## Learning goals
+
+- run Quarto chunks;
+- use vectors, tibbles, and dplyr verbs;
+- load `fpp3` and plot `aus_production`.
+
+## 1. Setup
+
+```{r}
+library(tidyverse)
+library(fpp3)
+```
+
+## 2. Calculator and vectors
+
+```{r}
+sales <- c(10, 12, 11, 15, 14)
+mean(sales)
+lag(sales)
+```
+
+## 3. A tiny tibble
+
+```{r}
+df <- tibble(time = 1:5, sales = sales)
+df |> mutate(lag1 = lag(sales)) |> filter(sales >= 12)
+```
+
+## 4. First time plot
+
+```{r}
+aus_production |>
+  autoplot(Beer) +
+  labs(title = "Australian beer production", y = "Megalitres")
+```
+
+## DELIVERABLE
+
+Knit to HTML. Add one sentence: does Beer look seasonal?
+

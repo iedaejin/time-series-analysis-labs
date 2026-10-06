@@ -1,0 +1,46 @@
+---
+title: "Lab 04 — Classical Decomposition"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+
+## Learning goals
+
+- implement a centred moving average;
+- fit classical decomposition and read panels.
+
+```{r}
+library(fpp3)
+```
+
+## 1. Implement a 3-MA
+
+```{r}
+ma3 <- function(x) {
+  n <- length(x)
+  out <- rep(NA_real_, n)
+  for (t in 2:(n - 1)) out[t] <- mean(x[(t - 1):(t + 1)])
+  out
+}
+ma3(c(5, 6, 8, 7, 9))  # expect 7 at position 3
+```
+
+## 2. Classical decomp
+
+```{r}
+aus_production |>
+  model(classical_decomposition(Beer, type = "additive")) |>
+  components() |>
+  autoplot()
+```
+
+## DELIVERABLE
+
+Paste your MA function and one sentence on the Beer seasonal panel.
+

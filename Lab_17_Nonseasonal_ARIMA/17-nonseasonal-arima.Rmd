@@ -1,0 +1,48 @@
+---
+title: "Lab 17 — Nonseasonal ARIMA"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+Complete the exercises below using `fpp3`. Show plots and short written interpretations.
+
+## Setup
+
+```{r}
+library(fpp3)
+```
+
+
+## 1. Manual vs automatic
+
+```{r}
+spain <- global_economy |> filter(Country == "Spain")
+train <- spain |> filter(Year <= 2010)
+fit <- train |>
+  model(
+    drift = RW(log(GDP) ~ drift()),
+    auto = ARIMA(log(GDP) ~ PDQ(0,0,0)),
+    ar110 = ARIMA(log(GDP) ~ pdq(1,1,0) + PDQ(0,0,0))
+  )
+glance(fit) |> arrange(AICc)
+```
+
+## 2. Forecast accuracy
+
+```{r}
+fit |> forecast(h = 8) |> accuracy(spain) |>
+  select(.model, RMSE, MAE, MASE)
+```
+
+## 3. Residuals
+
+```{r}
+fit |> select(auto) |> gg_tsresiduals()
+```

@@ -1,0 +1,35 @@
+---
+title: "Lab 13 — Error Metrics"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+Complete the exercises below using `fpp3`. Show plots and short written interpretations.
+
+## Setup
+
+```{r}
+library(fpp3)
+```
+
+
+## 1. Hold-out accuracy
+
+```{r}
+train <- aus_production |> filter_index(. ~ "2007 Q4")
+fit <- train |> model(snaive = SNAIVE(Beer), ets = ETS(Beer))
+fc <- fit |> forecast(h = 12)
+fc |> accuracy(aus_production) |>
+  select(.model, ME, RMSE, MAE, MAPE, MASE)
+```
+
+## 2. Interpretation
+
+Which metric would you report to a business partner? Why?

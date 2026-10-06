@@ -1,0 +1,52 @@
+---
+title: "Lab 02 — Time Series Graphics"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+
+## Learning goals
+
+- build time, seasonal, subseries, and lag plots;
+- describe trend vs season in words.
+
+```{r}
+library(fpp3)
+```
+
+## 1. Time plot
+
+```{r}
+aus_production |> autoplot(Beer)
+```
+
+## 2. Seasonal tools
+
+```{r}
+aus_production |> gg_season(Beer, labels = "both")
+aus_production |> gg_subseries(Beer)
+```
+
+## 3. Lag plot
+
+```{r}
+aus_production |> gg_lag(Beer, geom = "point")
+```
+
+## 4. Tourism stretch
+
+```{r}
+tourism |>
+  filter(Purpose == "Holiday", State == "Victoria") |>
+  autoplot(Trips)
+```
+
+## DELIVERABLE
+
+Which quarter looks highest for Beer? Support with a plot.
+

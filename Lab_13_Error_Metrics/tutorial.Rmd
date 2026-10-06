@@ -1,0 +1,95 @@
+---
+title: "Lab 13 — Error Metrics"
+subtitle: "Time Series Analysis (BDBA)"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(fpp3)
+knitr::opts_chunk$set(
+  echo = FALSE, message = FALSE, warning = FALSE,
+  fig.width = 8, fig.height = 4
+)
+source("lab_submission.R")
+
+lab_meta <- list(id = "lab13", title = "Error Metrics")
+lab_prompts <- c(
+  q1 = "MAPE is problematic when:",
+  q2 = "MASE compares MAE to which benchmark’s in-sample errors (by default idea)?",
+  q3 = "Which metric would you report to a business partner, and why?"
+)
+```
+
+## What you will do
+
+Open this file and click **Run Document**. Packages: `learnr`, `fpp3`.
+Exercise chunks run when you click Run Code. They are not knitted in one pass.
+
+## Hold-out accuracy
+```{r acc-ex, exercise=TRUE, exercise.lines=10}
+library(fpp3)
+train <- aus_production |> filter_index(. ~ "2007 Q4")
+fit <- train |> model(snaive = SNAIVE(Beer), ets = ETS(Beer))
+fc <- fit |> forecast(h = 12)
+fc |> accuracy(aus_production) |>
+  select(.model, ME, RMSE, MAE, MAPE, MASE)
+```
+
+```{r q1}
+question(
+  lab_prompts[["q1"]],
+  answer("Actuals are near zero (or zero)", correct = TRUE),
+  answer("The series is seasonal"),
+  answer("You used fpp3"),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+```{r q2}
+question(
+  lab_prompts[["q2"]],
+  answer("A naïve / seasonal naïve scale", correct = TRUE),
+  answer("AICc of ARIMA"),
+  answer("The sample mean of MAPE"),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+```{r q3}
+question_text(
+  lab_prompts[["q3"]],
+  open_answer(),
+  placeholder = "e.g. RMSE/MAE in megalitres because …",
+  trim = TRUE
+)
+```
+
+## Submit
+
+Answer the questions above first, type your name, download the `.txt`, and upload it.
+
+```{r submit-ui, echo=FALSE}
+shiny::textInput("student_name", "Your name", placeholder = "Name Surname")
+shiny::downloadButton("download_txt", "Download submission .txt")
+```
+
+```{r submit-server, context="server"}
+output$download_txt <- shiny::downloadHandler(
+  filename = function() lab_submission_filename(input$student_name, lab_meta$id),
+  content = function(file) {
+    write_lab_submission(
+      path = file,
+      name = input$student_name,
+      lab_id = lab_meta$id,
+      lab_title = lab_meta$title,
+      state = learnr::get_tutorial_state(),
+      prompts = lab_prompts
+    )
+  }
+)
+```

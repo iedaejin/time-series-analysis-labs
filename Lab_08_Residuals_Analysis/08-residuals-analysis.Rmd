@@ -1,0 +1,48 @@
+---
+title: "Lab 08 — Residuals Analysis"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+Complete the exercises below using `fpp3`. Show plots and short written interpretations.
+
+## Setup
+
+```{r}
+library(fpp3)
+```
+
+
+## 1. Fit SES and seasonal naïve to Beer
+
+```{r}
+fits <- aus_production |>
+  model(
+    ses = ETS(Beer ~ error("A") + trend("N") + season("N")),
+    snaive = SNAIVE(Beer)
+  )
+```
+
+## 2. Residual plots
+
+```{r}
+fits |> select(ses) |> gg_tsresiduals()
+fits |> select(snaive) |> gg_tsresiduals()
+```
+
+## 3. Portmanteau
+
+```{r}
+augment(fits) |> features(.innov, ljung_box, lag = 8)
+```
+
+## 4. Write-up
+
+Which model has residuals closer to white noise? Why?

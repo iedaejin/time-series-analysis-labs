@@ -1,0 +1,87 @@
+---
+title: "Lab 18 — ETS, Accuracy & ARIMA Bridge"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+By the end of this lab you should be able to:
+
+- build a clean train/test split for a `tsibble`;
+- compare ETS and a seasonal naïve forecast with `accuracy()`;
+- use differencing displays to motivate an ARIMA order;
+- report hold-out RMSE/MAE without comparing AICc across model families.
+
+## 1. Setup
+
+```{r}
+library(fpp3)
+```
+
+## 2. Series and split
+
+```{r}
+beer <- aus_production |>
+  select(Quarter, Beer) |>
+  filter(!is.na(Beer))
+
+beer_train <- beer |> filter(Quarter <= max(Quarter) - 8)
+beer_test  <- beer |> filter(Quarter >  max(Quarter) - 8)
+
+beer |> autoplot(Beer) + labs(title = "Beer production", y = "Megalitres")
+```
+
+How many quarters are in train vs test?
+
+```{r}
+# Your code here
+```
+
+## 3. ETS and seasonal naïve
+
+```{r}
+# Fit ETS(Beer) and SNAIVE(Beer) on beer_train
+# Forecast the test horizon and call accuracy()
+# Your code here
+```
+
+## 4. Differencing and ACF/PACF
+
+```{r}
+beer_train |> gg_tsdisplay(Beer, plot_type = "partial")
+```
+
+```{r}
+# Plot gg_tsdisplay on difference(Beer)
+# Your code here
+```
+
+## 5. ARIMA
+
+```{r}
+# Manual candidate + ARIMA(Beer) auto; compare AICc; test accuracy
+# Your code here
+```
+
+## 6. Residuals
+
+```{r}
+# gg_tsresiduals for your preferred model
+# Your code here
+```
+
+## DELIVERABLE
+
+Render this `lab.qmd` to HTML. Include a short markdown paragraph:
+
+1. Winning model on test RMSE (and MAE if different).
+2. Whether you would use $d=1$ and why.
+3. Any residual ACF concern.
+
+Submit the HTML (or `.qmd` + HTML) per LMS instructions.

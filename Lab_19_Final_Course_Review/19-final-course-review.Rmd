@@ -1,0 +1,58 @@
+---
+title: "Lab 19 — Final Course Review Bake-off"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+## Learning goals
+
+- Run a three-way bake-off: seasonal naïve, ETS, ARIMA.
+- Compare models on a hold-out with RMSE and MAE.
+- Write a short exam-style justification of your pick.
+
+```{r}
+library(fpp3)
+```
+
+## Data
+
+```{r}
+beer <- aus_production |>
+  select(Quarter, Beer) |>
+  filter(!is.na(Beer))
+
+train <- beer |> filter(Quarter <= max(Quarter) - 8)
+test  <- beer |> filter(Quarter >  max(Quarter) - 8)
+
+beer |> autoplot(Beer)
+```
+
+## Models
+
+```{r}
+# Fit SNAIVE(Beer), ETS(Beer), ARIMA(Beer) on train
+# Forecast h = nrow(test); accuracy()
+# Your code here
+```
+
+## Diagnostics
+
+```{r}
+# Residuals for your preferred model
+# Your code here
+```
+
+## DELIVERABLE
+
+Render to HTML. Include:
+
+1. Accuracy table (RMSE, MAE).
+2. A paragraph (≤120 words) as if answering: “Which method would you recommend and why?”
+3. One residual caveat.
+
+Submit per LMS instructions.

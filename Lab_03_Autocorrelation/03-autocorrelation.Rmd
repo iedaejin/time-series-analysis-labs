@@ -1,0 +1,40 @@
+---
+title: "Lab 03 — Autocorrelation"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+
+## Learning goals
+
+- compute and plot the ACF;
+- contrast Beer with white noise.
+
+```{r}
+library(fpp3)
+set.seed(1)
+```
+
+## 1. ACF for Beer
+
+```{r}
+aus_production |> autoplot(Beer)
+aus_production |> ACF(Beer) |> autoplot()
+```
+
+## 2. White noise null
+
+```{r}
+wn <- tsibble(t = 1:200, y = rnorm(200), index = t)
+wn |> gg_acf(y)
+```
+
+## DELIVERABLE
+
+Three bullet differences between Beer ACF and WN ACF.
+

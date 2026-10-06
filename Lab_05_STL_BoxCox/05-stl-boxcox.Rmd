@@ -1,0 +1,45 @@
+---
+title: "Lab 05 — STL and Box–Cox"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+
+## Learning goals
+
+- fit STL;
+- estimate Guerrero $\lambda$ and decompose on a transformed scale.
+
+```{r}
+library(fpp3)
+```
+
+## 1. STL
+
+```{r}
+aus_production |>
+  model(STL(Beer ~ season(window = "periodic"))) |>
+  components() |>
+  autoplot()
+```
+
+## 2. Box–Cox + STL
+
+```{r}
+lambda <- aus_production |> features(Beer, guerrero) |> pull(lambda_guerrero)
+lambda
+aus_production |>
+  model(STL(box_cox(Beer, lambda))) |>
+  components() |>
+  autoplot()
+```
+
+## DELIVERABLE
+
+Report $\lambda$ and whether the transformed remainder looks cleaner.
+

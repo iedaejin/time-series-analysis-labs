@@ -1,0 +1,40 @@
+---
+title: "Lab 06 — Benchmark Forecasts"
+subtitle: "Time Series Analysis (BDBA) · optional session notebook"
+author: "Prof. Dae-Jin Lee (daelee@faculty.ie.edu)"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+
+## Learning goals
+
+- fit mean / naïve / seasonal naïve / drift;
+- visually compare forecasts.
+
+```{r}
+library(fpp3)
+train <- aus_production |> filter_index(. ~ "2005 Q4")
+```
+
+## 1. Fit benchmarks
+
+```{r}
+fit <- train |>
+  model(
+    Mean = MEAN(Beer),
+    Naive = NAIVE(Beer),
+    SNaive = SNAIVE(Beer),
+    Drift = RW(Beer ~ drift())
+  )
+fc <- fit |> forecast(h = "8 quarters")
+fc |> autoplot(aus_production)
+```
+
+## DELIVERABLE
+
+Which method looks most reasonable for Beer? Why (1–2 sentences)?
+
