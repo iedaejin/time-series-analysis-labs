@@ -31,7 +31,7 @@ aus_production |> ACF(Beer) |> autoplot()
 
 ```{r}
 wn <- tsibble(t = 1:200, y = rnorm(200), index = t)
-wn |> gg_acf(y)
+wn |> ACF(y) |> autoplot()
 ```
 
 ## DELIVERABLE

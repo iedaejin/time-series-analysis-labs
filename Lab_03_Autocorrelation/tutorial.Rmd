@@ -39,7 +39,7 @@ aus_production |> ACF(Beer) |> autoplot()
 ```{r wn-acf, exercise=TRUE, exercise.lines=5}
 set.seed(1)
 wn <- tsibble(t = 1:200, y = rnorm(200), index = t)
-wn |> gg_acf(y)
+wn |> ACF(y) |> autoplot()
 ```
 
 ```{r q1}
