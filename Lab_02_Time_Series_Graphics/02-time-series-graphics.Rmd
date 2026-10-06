@@ -40,10 +40,33 @@ aus_production |> gg_lag(Beer, geom = "point")
 
 ## 4. Tourism stretch
 
-```{r}
-tourism |>
+Victoria has many regions, so plotting them together creates a spaghetti chart.
+First aggregate to one state-level series; then optionally facet a few regions.
+
+```{r tourism-state, fig.width=8, fig.height=4}
+vic_holiday <- tourism |>
   filter(Purpose == "Holiday", State == "Victoria") |>
-  autoplot(Trips)
+  index_by(Quarter) |>
+  summarise(Trips = sum(Trips), .groups = "drop")
+
+vic_holiday |>
+  autoplot(Trips) +
+  labs(
+    title = "Victoria holiday trips (all regions summed)",
+    y = "Trips"
+  )
+```
+
+```{r tourism-regions, fig.width=9, fig.height=6}
+tourism |>
+  filter(
+    Purpose == "Holiday",
+    Region %in% c("Melbourne", "Great Ocean Road", "High Country", "Phillip Island")
+  ) |>
+  autoplot(Trips) +
+  facet_wrap(vars(Region), scales = "free_y", ncol = 2) +
+  guides(colour = "none") +
+  labs(title = "Selected Victoria holiday regions", y = "Trips")
 ```
 
 ## DELIVERABLE

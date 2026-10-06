@@ -60,10 +60,16 @@ question(
 ```
 
 ## Tourism stretch (optional)
-```{r tourism-ex, exercise=TRUE, exercise.lines=5}
-tourism |>
+```{r tourism-ex, exercise=TRUE, exercise.lines=10}
+# Sum regions so autoplot is one clear series (not 20+ lines + a huge legend)
+vic_holiday <- tourism |>
   filter(Purpose == "Holiday", State == "Victoria") |>
-  autoplot(Trips)
+  index_by(Quarter) |>
+  summarise(Trips = sum(Trips), .groups = "drop")
+
+vic_holiday |>
+  autoplot(Trips) +
+  labs(title = "Victoria holiday trips (all regions summed)", y = "Trips")
 ```
 
 ```{r q3}
